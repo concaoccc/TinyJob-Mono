@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7769665F-6376-4886-80C7-CAADBCAA95E5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{01C03B2D-9052-4393-AD34-3B82DC388239}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyJobApi", "src\TinyJobApi\TinyJobApi.csproj", "{EC7E9099-02CA-4D55-91EE-976A0184EECF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TinyJobApi", "src\TinyJobApi\TinyJobApi.csproj", "{645B7B09-2201-4744-970E-D7197561271F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,16 +13,16 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EC7E9099-02CA-4D55-91EE-976A0184EECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC7E9099-02CA-4D55-91EE-976A0184EECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC7E9099-02CA-4D55-91EE-976A0184EECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC7E9099-02CA-4D55-91EE-976A0184EECF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{645B7B09-2201-4744-970E-D7197561271F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{645B7B09-2201-4744-970E-D7197561271F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{645B7B09-2201-4744-970E-D7197561271F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{645B7B09-2201-4744-970E-D7197561271F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{EC7E9099-02CA-4D55-91EE-976A0184EECF} = {7769665F-6376-4886-80C7-CAADBCAA95E5}
+		{645B7B09-2201-4744-970E-D7197561271F} = {01C03B2D-9052-4393-AD34-3B82DC388239}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {57BD6716-70D9-41CC-95CD-E7F12E843E4F}

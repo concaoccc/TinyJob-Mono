@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TinyJobApi.Models;
+using TinyJobApi.Services;
+using TinyJobApi.Services.Mock;
 
 namespace TinyJobApi.Controllers
 {
@@ -8,42 +10,71 @@ namespace TinyJobApi.Controllers
     [ApiController]
     public class SchedulerController : ControllerBase
     {
+        private readonly ISchedulerService _schedulerService;
+
+        public SchedulerController()
+        {
+            _schedulerService = new MockSchedulerService();
+        }
+
         // Get all schedulers, return List<Scheduler>
         [HttpGet(Name = "GetAllSchedulers")]
-        public IEnumerable<Scheduler> GetAllSchedulers()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<Scheduler>>> GetAllSchedulers()
         {
-            int pageSize = Convert.ToInt32(Request.Query["pageSize"]);
-            int pageCount = Convert.ToInt32(Request.Query["pageCount"]);
-
             // Your code to get all schedulers with pagination logic goes here
-            return new List<Scheduler>();
+            return Ok(await _schedulerService.GetAllSchedulersAsync());
         }
 
         // Get scheduler by id, return Scheduler
         [HttpGet("{id}", Name = "GetSchedulerById")]
-        public IActionResult GetSchedulerById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Scheduler>> GetSchedulerById(int id)
         {
-            // Your code to get scheduler by id goes here
+            var scheduler = await _schedulerService.GetSchedulerByIdAsync(id);
+            if (scheduler == null)
+            {
+                return NotFound();
+            }
 
-            return Ok();
+            return Ok(scheduler);
         }
 
         // Update scheduler by id, receive Json update, returns updated scheduler
         [HttpPut("{id}", Name = "UpdateSchedulerById")]
-        public IActionResult UpdateSchedulerById(int id, [FromBody] Scheduler scheduler)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Scheduler>> UpdateSchedulerById(int id, Scheduler scheduler)
         {
-            // Your code to update scheduler by id using the updateModel goes here
+            if (scheduler == null || scheduler.Id != id)
+            {
+                return BadRequest();
+            }
 
-            return Ok();
+            var updatedScheduler = await _schedulerService.UpdateSchedulerByIdAsync(id, scheduler);
+            if (updatedScheduler == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedScheduler);
         }
 
         // Create new scheduler, receive Json new, returns new scheduler
         [HttpPost(Name = "CreateScheduler")]
-        public IActionResult CreateScheduler([FromBody] Scheduler scheduler)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<Scheduler>> CreateScheduler([FromBody] Scheduler scheduler)
         {
-            // Your code to create new scheduler using the newModel goes here
-
-            return Ok();
+            if (scheduler == null)
+            {
+                return BadRequest();
+            }
+            
+            var newScheduler = await _schedulerService.CreateSchedulerAsync(scheduler);
+            return CreatedAtRoute("GetSchedulerById", new { id = newScheduler.Id }, newScheduler);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace TinyJobApi.Models;
 
 public class Package
 {
+    public required int Id { get; set; }
     public required string Name { get; set; }
     public required string Version { get; set; }
     public required string StorageAccount { get; set; }

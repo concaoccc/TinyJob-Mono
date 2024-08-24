@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TinyJobApi.Models;
+using TinyJobApi.Services;
+using TinyJobApi.Services.Mock;
 
 namespace TinyJobApi.Controllers
 {
@@ -8,42 +10,70 @@ namespace TinyJobApi.Controllers
     [ApiController]
     public class PackageController : ControllerBase
     {
+        private readonly IPackageService _packageService;
+
+        public PackageController()
+        {
+            _packageService = new MockPackageService();
+        }
+
         // Get all packages, return List<Package>
         [HttpGet(Name = "GetAllPackages")]
-        public IEnumerable<Package> GetAllPackages()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<Package>>> GetAllPackages()
         {
-            int pageSize = Convert.ToInt32(Request.Query["pageSize"]);
-            int pageCount = Convert.ToInt32(Request.Query["pageCount"]);
-
-            // Your code to get all packages with pagination logic goes here
-            return new List<Package>();
+            return Ok(await _packageService.GetAllPackagesAsync());
         }
 
         // Get package by id, return Package
         [HttpGet("{id}", Name = "GetPackageById")]
-        public IActionResult GetPackageById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Job>> GetPackageById(int id)
         {
-            // Your code to get package by id goes here
+            var package = await _packageService.GetPackageByIdAsync(id);
+            if (package == null)
+            {
+                return NotFound();
+            }
 
-            return Ok();
+            return Ok(package);
         }
 
         // Update package by id, receive Json update, returns updated package
         [HttpPut("{id}", Name = "UpdatePackageById")]
-        public IActionResult UpdatePackageById(int id, [FromBody] Package package)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Job>> UpdatePackageById(int id, [FromBody] Package package)
         {
-            // Your code to update package by id using the updateModel goes here
+            if (package == null || package.Id != id)
+            {
+                return BadRequest();
+            }
 
-            return Ok();
+            var updatedPackage = await _packageService.UpdatePackageByIdAsync(id, package);
+            if (updatedPackage == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedPackage);
         }
 
         // Create new package, receive Json new, returns new package
         [HttpPost(Name = "CreatePackage")]
-        public IActionResult CreatePackage([FromBody] Package package)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<Package>> CreatePackage(Package package)
         {
-            // Your code to create new package using the newModel goes here
+            if (package == null)
+            {
+                return BadRequest();
+            }
 
-            return Ok();
+            var newPackage = await _packageService.CreatePackageAsync(package);
+            return CreatedAtRoute("GetPackageById", new { id = newPackage.Id }, newPackage);
         }
     }
 }
