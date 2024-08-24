@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TinyJobApi.Models;
+using TinyJobApi.Services;
+using TinyJobApi.Services.Mock;
 
 namespace MyApp.Namespace
 {
@@ -8,30 +10,55 @@ namespace MyApp.Namespace
     [ApiController]
     public class JobController : ControllerBase
     {
+        private readonly IJobService _jobService;
+        
+        public JobController() {
+            _jobService = new MockJobService();
+        }
+
         // Get all jobs, return List<Job>
         [HttpGet(Name = "GetAllJobs")]
-        public List<Job> GetAllJobs()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<Job>>> GetAllJobs()
         {
             // Your code to get all jobs with pagination logic goes here
-            return new List<Job>();
+            return Ok(await _jobService.GetAllJobsAsync());
         }
 
         // Get job by id, return Job
         [HttpGet("{id}", Name = "GetJobById")]
-        public IActionResult GetJobById(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Job>> GetJobById(int id)
         {
-            // Your code to get job by id goes here
+            var job = await _jobService.GetJobByIdAsync(id);
+            if (job == null)
+            {
+                return NotFound();
+            }
 
-            return Ok();
+            return Ok(job);
         }
 
         // Update job by id, receive Json update, returns updated job
         [HttpPut("{id}", Name = "UpdateJobById")]
-        public IActionResult UpdateJobById(int id, [FromBody] Job job)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> UpdateJobStatusById(int id, Job job)
         {
-            // Your code to update job by id using the updateModel goes here
+            if (job == null || job.Id != id)
+            {
+                return BadRequest();
+            }
 
-            return Ok();
+            var updatedJob = await _jobService.UpdateJobStatusByIdAsync(id, job.Status);
+            if (updatedJob == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedJob);
         }
         
     }

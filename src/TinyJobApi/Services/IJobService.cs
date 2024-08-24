@@ -7,6 +7,6 @@ public interface IJobService
 {
     public Task<Job?> GetJobByIdAsync(int id);
     public Task<IEnumerable<Job>> GetAllJobsAsync();
-    public Task UpdateJobStatusByIdAsync(int id, string status);
+    public Task<Job?> UpdateJobStatusByIdAsync(int id, string status);
     public Task DeleteJobByIdAsync(int id);
 }

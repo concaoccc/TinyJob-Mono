@@ -1,7 +1,7 @@
 using System;
 using TinyJobApi.Models;
 
-namespace TinyJobApi.Services;
+namespace TinyJobApi.Services.Mock;
 
 public class MockJobService : IJobService
 {
