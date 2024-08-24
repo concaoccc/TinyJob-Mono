@@ -46,33 +46,35 @@ namespace TinyJobApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public Task<ActionResult<Scheduler>> UpdateSchedulerById(int id, Scheduler scheduler)
+        public async Task<ActionResult<Scheduler>> UpdateSchedulerById(int id, Scheduler scheduler)
         {
             if (scheduler == null || scheduler.Id != id)
             {
-                return Task.FromResult<ActionResult<Scheduler>>(BadRequest());
+                return BadRequest();
             }
 
-            var updatedScheduler = _schedulerService.UpdateSchedulerByIdAsync(id, scheduler);
+            var updatedScheduler = await _schedulerService.UpdateSchedulerByIdAsync(id, scheduler);
             if (updatedScheduler == null)
             {
-                return Task.FromResult<ActionResult<Scheduler>>(NotFound());
+                return NotFound();
             }
 
-            return Task.FromResult<ActionResult<Scheduler>>(Ok(updatedScheduler));
+            return Ok(updatedScheduler);
         }
 
         // Create new scheduler, receive Json new, returns new scheduler
         [HttpPost(Name = "CreateScheduler")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public IActionResult CreateScheduler([FromBody] Scheduler scheduler)
+        public async Task<ActionResult<Scheduler>> CreateScheduler([FromBody] Scheduler scheduler)
         {
             if (scheduler == null)
             {
                 return BadRequest();
             }
-            return Ok();
+            
+            var newScheduler = await _schedulerService.CreateSchedulerAsync(scheduler);
+            return CreatedAtRoute("GetSchedulerById", new { id = newScheduler.Id }, newScheduler);
         }
     }
 }
