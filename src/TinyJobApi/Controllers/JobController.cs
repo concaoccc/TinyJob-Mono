@@ -10,11 +10,8 @@ namespace MyApp.Namespace
     {
         // Get all jobs, return List<Job>
         [HttpGet(Name = "GetAllJobs")]
-        public IEnumerable<Job> GetAllJobs()
+        public List<Job> GetAllJobs()
         {
-            int pageSize = Convert.ToInt32(Request.Query["pageSize"]);
-            int pageCount = Convert.ToInt32(Request.Query["pageCount"]);
-
             // Your code to get all jobs with pagination logic goes here
             return new List<Job>();
         }
