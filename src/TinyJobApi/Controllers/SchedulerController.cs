@@ -12,9 +12,9 @@ namespace TinyJobApi.Controllers
     {
         private readonly ISchedulerService _schedulerService;
 
-        public SchedulerController()
+        public SchedulerController(ISchedulerService schedulerService)
         {
-            _schedulerService = new MockSchedulerService();
+            _schedulerService = schedulerService;
         }
 
         // Get all schedulers, return List<Scheduler>

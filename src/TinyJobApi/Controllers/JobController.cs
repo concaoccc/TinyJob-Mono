@@ -12,8 +12,8 @@ namespace MyApp.Namespace
     {
         private readonly IJobService _jobService;
         
-        public JobController() {
-            _jobService = new MockJobService();
+        public JobController(IJobService jobService) {
+            _jobService = jobService;
         }
 
         // Get all jobs, return List<Job>

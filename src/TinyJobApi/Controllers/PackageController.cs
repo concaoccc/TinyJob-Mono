@@ -12,9 +12,9 @@ namespace TinyJobApi.Controllers
     {
         private readonly IPackageService _packageService;
 
-        public PackageController()
+        public PackageController(IPackageService packageService)
         {
-            _packageService = new MockPackageService();
+            _packageService = packageService;
         }
 
         // Get all packages, return List<Package>
