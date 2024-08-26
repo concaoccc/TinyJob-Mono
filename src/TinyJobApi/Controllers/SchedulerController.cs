@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TinyJobApi.Models;
+using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
-using TinyJobApi.Services.Mock;
 
 namespace TinyJobApi.Controllers
 {
@@ -20,7 +20,7 @@ namespace TinyJobApi.Controllers
         // Get all schedulers, return List<Scheduler>
         [HttpGet(Name = "GetAllSchedulers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Scheduler>>> GetAllSchedulers()
+        public async Task<ActionResult<IEnumerable<SchedulerVo>>> GetAllSchedulers()
         {
             // Your code to get all schedulers with pagination logic goes here
             return Ok(await _schedulerService.GetAllSchedulersAsync());
@@ -30,7 +30,7 @@ namespace TinyJobApi.Controllers
         [HttpGet("{id}", Name = "GetSchedulerById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Scheduler>> GetSchedulerById(int id)
+        public async Task<ActionResult<SchedulerVo>> GetSchedulerById(int id)
         {
             var scheduler = await _schedulerService.GetSchedulerByIdAsync(id);
             if (scheduler == null)
@@ -46,7 +46,7 @@ namespace TinyJobApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Scheduler>> UpdateSchedulerById(int id, Scheduler scheduler)
+        public async Task<ActionResult<SchedulerVo>> UpdateSchedulerById(int id, Scheduler scheduler)
         {
             if (scheduler == null || scheduler.Id != id)
             {
@@ -66,13 +66,13 @@ namespace TinyJobApi.Controllers
         [HttpPost(Name = "CreateScheduler")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<Scheduler>> CreateScheduler([FromBody] Scheduler scheduler)
+        public async Task<ActionResult<SchedulerVo>> CreateScheduler(SchedulerCreationVo schedulerCreationVo)
         {
-            if (scheduler == null)
+            if (schedulerCreationVo == null)
             {
                 return BadRequest();
             }
-            
+
             var newScheduler = await _schedulerService.CreateSchedulerAsync(scheduler);
             return CreatedAtRoute("GetSchedulerById", new { id = newScheduler.Id }, newScheduler);
         }

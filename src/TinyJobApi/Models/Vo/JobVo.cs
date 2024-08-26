@@ -1,9 +1,24 @@
 using System;
+using TinyJobApi.Database.Entity;
 
 namespace TinyJobApi.Models.Vo;
 
 public class JobVo
 {
+    public JobVo(JobDo jobDo) 
+    {
+        Id = jobDo.Id;
+        Name = jobDo.Name;
+        SchedulerId = jobDo.SchedulerId;
+        SchedulerName = jobDo.Scheduler.Name;
+        Status = jobDo.Status;
+        ScheduledExecutionTime = jobDo.ScheduledExecutionTime;
+        ActualExecutionTime = jobDo.ActualExecutionTime;
+        FinishTime = jobDo.FinishTime;
+        CreateTime = jobDo.CreateTime;
+        UpdateTime = jobDo.UpdateTime;
+    }
+    
     public long Id { get; set; }
     public required string Name { get; set; }
     public long SchedulerId { get; set; }

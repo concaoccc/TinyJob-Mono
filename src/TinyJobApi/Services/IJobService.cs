@@ -1,12 +1,12 @@
 using System;
-using TinyJobApi.Models;
+using TinyJobApi.Database.Entity;
 
 namespace TinyJobApi.Services;
 
 public interface IJobService
 {
-    public Task<Job?> GetJobByIdAsync(int id);
-    public Task<IEnumerable<Job>> GetAllJobsAsync();
-    public Task<Job?> UpdateJobStatusByIdAsync(int id, string status);
+    public Task<JobDo?> GetJobByIdAsync(int id);
+    public Task<IEnumerable<JobDo>> GetAllJobsAsync();
+    public Task<JobDo?> UpdateJobStatusByIdAsync(int id, JobStatus status);
     public Task DeleteJobByIdAsync(int id);
 }

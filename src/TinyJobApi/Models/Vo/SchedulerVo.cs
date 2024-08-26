@@ -2,7 +2,7 @@ using System;
 
 namespace TinyJobApi.Models.Vo;
 
-public class ScheduerVo
+public class SchedulerVo
 {
     public required int Id { get; set; }
     public required string Name { get; set; }
