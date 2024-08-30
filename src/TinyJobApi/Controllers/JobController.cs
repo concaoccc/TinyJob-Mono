@@ -21,7 +21,7 @@ namespace MyApp.Namespace
         public async Task<ActionResult<List<JobVo>>> GetAllJobs()
         {
             var jobs = await _jobService.GetAllJobsAsync();
-            var JobVos = jobs.Select(job => new JobVo(job));
+            var JobVos = jobs.Select(job => new JobVo(job)).ToList();
             // Your code to get all jobs with pagination logic goes here
             return Ok(JobVos);
         }
