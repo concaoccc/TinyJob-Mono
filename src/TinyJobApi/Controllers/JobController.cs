@@ -1,44 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
+using TinyJobApi.Database.Entity;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
 
-namespace MyApp.Namespace
+namespace TinyJobApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class JobController : ControllerBase
+    public class JobController(IJobService jobService, ILogger<JobController> logger) : ControllerBase
     {
-        private readonly IJobService _jobService;
-
-        public JobController(IJobService jobService)
-        {
-            _jobService = jobService;
-        }
-
         // Get all jobs, return List<Job>
         [HttpGet(Name = "GetAllJobs")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<JobVo>>> GetAllJobs()
+        public ActionResult<List<JobVo>> GetAllJobs()
         {
-            var jobs = await _jobService.GetAllJobsAsync();
-            var JobVos = jobs.Select(job => new JobVo(job)).ToList();
-            // Your code to get all jobs with pagination logic goes here
-            return Ok(JobVos);
+            var jobs = jobService.GetAllJobs();
+            logger.LogInformation($"Get {jobs.Count()} jobs.");
+            logger.LogDebug($"Get all jobs: {jobs}");
+            return Ok(jobs);
         }
 
         // Get job by id, return Job
         [HttpGet("{id}", Name = "GetJobById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<JobVo>> GetJobById(int id)
+        public ActionResult<JobVo> GetJobById(int id)
         {
-            var job = await _jobService.GetJobByIdAsync(id);
+            logger.LogInformation($"Get job by id: {id}");
+            var job = jobService.GetJobById(id);
             if (job is null)
             {
+                logger.LogWarning($"Get job {id} not found.");
                 return NotFound();
             }
-
-            return Ok(new JobVo(job));
+            
+            logger.LogInformation($"Get job {job}");
+            return Ok(job);
         }
 
         // Update job by id, receive Json update, returns updated job
@@ -46,21 +43,18 @@ namespace MyApp.Namespace
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<JobVo>> UpdateJobStatusById(int id, JobUpdateVo job)
+        public ActionResult<JobVo> UpdateJobStatusById(int id, JobStatus jobStatus)
         {
-            if (job == null || job.Id != id)
-            {
-                return BadRequest();
-            }
-
-            var updatedJob = await _jobService.UpdateJobStatusByIdAsync(id, job.Status);
+            logger.LogInformation($"update job {id} to {jobStatus}");
+            var updatedJob = jobService.UpdateJobStatusById(id, jobStatus);
             if (updatedJob is null)
             {
+                logger.LogWarning($"Update job {id} not found.");
                 return NotFound();
             }
 
-            return Ok(updatedJob.Value);
+            logger.LogInformation($"Updated job {updatedJob}");
+            return Ok(updatedJob);
         }
-
     }
 }

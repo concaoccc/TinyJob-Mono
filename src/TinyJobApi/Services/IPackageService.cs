@@ -7,9 +7,9 @@ namespace TinyJobApi.Services;
 
 public interface IPackageService
 {
-    public Task<int> CreatePackageAsync(PackageDo packageDo);
-    public Task<PackageDo?> GetPackageByIdAsync(int id);
-    public Task<IEnumerable<PackageDo>> GetAllPackagesAsync();
-    public Task<PackageDo?> UpdatePackageByIdAsync(int id, PackageDo packageDo);
-    public Task DeletePackageByIdAsync(int id);
+    public PackageVo CreatePackage(PackageCreationVo packageCreationVo);
+    public PackageVo? GetPackageById(int id);
+    public List<PackageVo> GetAllPackages();
+    public PackageVo? UpdatePackageById(int id, PackageUpdateVo packageUpdateVo);
+    public void DeletePackageById(int id);
 }

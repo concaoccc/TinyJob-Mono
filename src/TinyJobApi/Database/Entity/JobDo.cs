@@ -8,8 +8,8 @@ namespace TinyJobApi.Database.Entity;
 public enum JobStatus
 {
     NotStarted = 1,
-    Schedulered = 2,
-    WaitForExectution = 3,
+    Scheduled = 2,
+    WaitForExecution = 3,
     Executing = 4,
     Succeed = 5,
     Failed = 6,
@@ -21,32 +21,17 @@ public enum JobStatus
 public class JobDo
 {
     [Key]
-    public long Id { get; set; }
-
+    public long Id { get; init; }
     [MaxLength(50)]
     [Required]
-    public required string Name { get; set; }
-
+    public required string Name { get; init; }
     [ForeignKey("Scheduler")]
-    public long SchedulerId { get; set; }
-
-    public virtual required SchedulerDo Scheduler { get; set; }
-
-    public long ExecutorId { get; set; }
-
-    [AllowedValues(JobStatus.NotStarted, JobStatus.Schedulered, JobStatus.WaitForExectution, JobStatus.Executing, JobStatus.Succeed, JobStatus.Failed, JobStatus.Paused, JobStatus.Stopped, JobStatus.ReScheduled)]
-    public required string Status { get; set; }
-
-    [AllowNull]
+    public long SchedulerId { get; init; }
+    public long? ExecutorId { get; set; }
+    public required JobStatus Status { get; set; }
     public DateTime? ScheduledExecutionTime { get; set; }
-
-    [AllowNull]
     public DateTime? ActualExecutionTime { get; set; }
-
-    [AllowNull]
     public DateTime? FinishTime { get; set; }
-
     public DateTime CreateTime { get; set; }
-
     public DateTime UpdateTime { get; set; }
 }

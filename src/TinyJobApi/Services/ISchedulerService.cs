@@ -7,9 +7,9 @@ namespace TinyJobApi.Services;
 
 public interface ISchedulerService
 {
-    public Task<IEnumerable<SchedulerDo>> GetAllSchedulersAsync();
-    public Task<SchedulerDo?> GetSchedulerByIdAsync(int id);
-    public Task<SchedulerDo?> UpdateSchedulerByIdAsync(int id, SchedulerDo schedulerDo);
-    public Task<int> CreateSchedulerAsync(SchedulerDo schedulerDo);
-    public Task DeleteSchedulerByIdAsync(int id);
+    public List<SchedulerVo> GetAllSchedulers();
+    public SchedulerVo? GetSchedulerById(int id);
+    public SchedulerVo? UpdateSchedulerById(int id, SchedulerUpdateVo schedulerUpdateVo);
+    public SchedulerVo CreateScheduler(SchedulerCreationVo schedulerCreationVo);
+    public void DeleteSchedulerById(int id);
 }

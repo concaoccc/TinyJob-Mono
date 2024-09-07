@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace TinyJobApi.Database.Entity;
@@ -8,10 +7,13 @@ namespace TinyJobApi.Database.Entity;
 public class UserDo
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
+    [MaxLength(30)]
     public required string Name { get; set; }
+    [MaxLength(30)]
     public required string Pwd { get; set; }
+    [MaxLength(30)]
     public string? Email { get; set; }
-    public DateTime CreateTime { get; set; }
-    public DateTime UpdateTime { get; set; }
+    public DateTime CreateTime { get; init; }
+    public DateTime? UpdateTime { get; set; }
 }

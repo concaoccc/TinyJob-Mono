@@ -1,61 +1,113 @@
 using System;
 using TinyJobApi.Data;
 using TinyJobApi.Database.Entity;
+using TinyJobApi.Models.Vo;
 
 namespace TinyJobApi.Services;
 
-public class PackageServiceImp : IPackageService
+public class PackageServiceImp(AppDbContext appDbContext) : IPackageService
 {
-    private readonly AppDbContext _appDbContext;
-
-    public PackageServiceImp(AppDbContext appDbContext)
+    public PackageVo CreatePackage(PackageCreationVo packageCreationVo)
     {
-        _appDbContext = appDbContext;
+        var packageDo = new PackageDo
+        {
+            Name = packageCreationVo.Name,
+            Description = packageCreationVo.Description,
+            RelativePath = packageCreationVo.RelativePath,
+            StorageAccount = packageCreationVo.StorageAccount,
+            Version = packageCreationVo.Version,
+            CreateTime = DateTime.Now,
+            UpdateTime = DateTime.Now,
+        };
+        appDbContext.Packages.Add(packageDo);
+        appDbContext.SaveChanges();
+        return ConvertPackageDoToVo(packageDo);
     }
-    
-    public Task<int> CreatePackageAsync(PackageDo packageDo)
-    {
-        _appDbContext.Packages.Add(packageDo);
-        return Task.FromResult(_appDbContext.SaveChanges());
-    }
 
-    public Task DeletePackageByIdAsync(int id)
+    public void DeletePackageById(int id)
     {
-        var package = _appDbContext.Packages.FirstOrDefault(p => p.Id == id);
+        var package = appDbContext.Packages.FirstOrDefault(p => p.Id == id);
         if (package != null)
         {
-            _appDbContext.Packages.Remove(package);
-            return Task.FromResult(_appDbContext.SaveChanges());
+            appDbContext.Packages.Remove(package);
+            appDbContext.SaveChanges();
         }
-
-        return Task.CompletedTask;
     }
 
-    public Task<IEnumerable<PackageDo>> GetAllPackagesAsync()
+    public List<PackageVo> GetAllPackages()
     {
-        return Task.FromResult<IEnumerable<PackageDo>>(_appDbContext.Packages);
+        var jobDos = appDbContext.Packages.ToList();
+        return jobDos.Select(ConvertPackageDoToVo).ToList();
     }
 
-    public Task<PackageDo?> GetPackageByIdAsync(int id)
+    public PackageVo? GetPackageById(int id)
     {
-        return Task.FromResult(_appDbContext.Packages.FirstOrDefault(p => p.Id == id));
-    }
-
-    public Task<PackageDo?> UpdatePackageByIdAsync(int id, PackageDo packageDo)
-    {
-        var existingPackage = _appDbContext.Packages.FirstOrDefault(p => p.Id == id);
-        if (existingPackage != null)
+        var jobDo = appDbContext.Packages.FirstOrDefault(p => p.Id == id);
+        if (jobDo == null)
         {
-            existingPackage.Name = packageDo.Name;
-            existingPackage.Description = packageDo.Description;
-            existingPackage.RelativePath = packageDo.RelativePath;
-            existingPackage.StorageAccount = packageDo.StorageAccount;
-            existingPackage.Version = packageDo.Version;
-            existingPackage.UpdateTime = DateTime.Now;
-            _appDbContext.SaveChanges();
-            return Task.FromResult<PackageDo?>(existingPackage);
+            return null;
+        }
+        
+        return ConvertPackageDoToVo(jobDo);
+    }
+
+    public PackageVo? UpdatePackageById(int id, PackageUpdateVo packageUpdateVo)
+    {
+        var existingPackage = appDbContext.Packages.FirstOrDefault(p => p.Id == id);
+        if (existingPackage == null)
+        {
+            return null;
+        }
+        
+        bool needUpdate = false;
+        if (!string.IsNullOrEmpty(packageUpdateVo.Description) && packageUpdateVo.Description != existingPackage.Description)
+        {
+            needUpdate = true;
+            existingPackage.Description = packageUpdateVo.Description;
         }
 
-        return Task.FromResult<PackageDo?>(null);
+        if (!string.IsNullOrEmpty(packageUpdateVo.RelativePath) && packageUpdateVo.RelativePath != existingPackage.RelativePath)
+        {
+            needUpdate = true;
+            existingPackage.RelativePath = packageUpdateVo.RelativePath;
+        }
+            
+        if (!string.IsNullOrEmpty(packageUpdateVo.StorageAccount) && packageUpdateVo.StorageAccount != existingPackage.StorageAccount)
+        {
+            needUpdate = true;
+            existingPackage.StorageAccount = packageUpdateVo.StorageAccount;
+        }
+            
+        if (!string.IsNullOrEmpty(packageUpdateVo.Version) && packageUpdateVo.Version != existingPackage.Version)
+        {
+            needUpdate = true;
+            existingPackage.Version = packageUpdateVo.Version;
+        }
+
+        if (!needUpdate)
+        {
+            return ConvertPackageDoToVo(existingPackage);
+        }
+
+        existingPackage.UpdateTime = DateTime.Now;
+        appDbContext.SaveChanges();
+
+        return ConvertPackageDoToVo(existingPackage);
+    }
+    
+    // convert PackageDo to PackageVo
+    private PackageVo ConvertPackageDoToVo(PackageDo packageDo)
+    {
+        return new PackageVo
+        {
+            Id = packageDo.Id,
+            Name = packageDo.Name,
+            Description = packageDo.Description,
+            RelativePath = packageDo.RelativePath,
+            StorageAccount = packageDo.StorageAccount,
+            Version = packageDo.Version,
+            CreateTime = packageDo.CreateTime,
+            UpdateTime = packageDo.UpdateTime,
+        };
     }
 }

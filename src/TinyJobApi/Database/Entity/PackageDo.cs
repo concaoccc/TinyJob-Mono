@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,15 +8,19 @@ namespace TinyJobApi.Database.Entity;
 public class PackageDo
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
+    [MaxLength(30)]
     public required string Name { get; set; }
+    [MaxLength(30)]
     public required string Version { get; set; }
+    [MaxLength(100)]
     public required string StorageAccount { get; set; }
+    [MaxLength(100)]
     public required string RelativePath { get; set; }
     [ForeignKey("User")]
-    public long OwnerId { get; set; }
-    public virtual required UserDo Owner { get; set; }
+    public long OwnerId { get; init; }
+    [MaxLength(200)]
     public required string Description { get; set; }
-    public DateTime CreateTime { get; set; }
+    public DateTime CreateTime { get; init; }
     public DateTime UpdateTime { get; set; }
 }
