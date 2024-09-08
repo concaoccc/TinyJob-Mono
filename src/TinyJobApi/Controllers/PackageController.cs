@@ -1,42 +1,39 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TinyJobApi.Models;
+using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
-using TinyJobApi.Services.Mock;
 
 namespace TinyJobApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PackageController : ControllerBase
+    public class PackageController(IPackageService packageService, ILogger<PackageController> logger) : ControllerBase
     {
-        private readonly IPackageService _packageService;
-
-        public PackageController(IPackageService packageService)
-        {
-            _packageService = packageService;
-        }
-
         // Get all packages, return List<Package>
         [HttpGet(Name = "GetAllPackages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Package>>> GetAllPackages()
+        public ActionResult<IEnumerable<PackageVo>> GetAllPackages()
         {
-            return Ok(await _packageService.GetAllPackagesAsync());
+            var packages = packageService.GetAllPackages();
+            logger.LogInformation($"Get {packages.Count()} packages.");
+            logger.LogDebug($"Get all packages: {packages}");
+            return Ok(packageService.GetAllPackages());
         }
 
         // Get package by id, return Package
         [HttpGet("{id}", Name = "GetPackageById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Job>> GetPackageById(int id)
+        public ActionResult<PackageVo> GetPackageById(int id)
         {
-            var package = await _packageService.GetPackageByIdAsync(id);
-            if (package == null)
+            logger.LogInformation($"Get package by id: {id}");
+            var package = packageService.GetPackageById(id);
+            if (package is null)
             {
+                logger.LogWarning($"Get package {id} not found.");
                 return NotFound();
             }
-
+            
+            logger.LogInformation($"Get package {package}");
             return Ok(package);
         }
 
@@ -45,19 +42,16 @@ namespace TinyJobApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Job>> UpdatePackageById(int id, [FromBody] Package package)
+        public ActionResult<PackageVo> UpdatePackageById(int id, PackageUpdateVo packageUpdateVo)
         {
-            if (package == null || package.Id != id)
-            {
-                return BadRequest();
-            }
-
-            var updatedPackage = await _packageService.UpdatePackageByIdAsync(id, package);
+            var updatedPackage = packageService.UpdatePackageById(id, packageUpdateVo);
             if (updatedPackage == null)
             {
+                logger.LogWarning($"Update package {id} not found.");
                 return NotFound();
             }
-
+            
+            logger.LogInformation($"Updated package {updatedPackage}");
             return Ok(updatedPackage);
         }
 
@@ -65,14 +59,10 @@ namespace TinyJobApi.Controllers
         [HttpPost(Name = "CreatePackage")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<Package>> CreatePackage(Package package)
+        public ActionResult<PackageVo> CreatePackage(PackageCreationVo packageCreationVo)
         {
-            if (package == null)
-            {
-                return BadRequest();
-            }
-
-            var newPackage = await _packageService.CreatePackageAsync(package);
+            var newPackage = packageService.CreatePackage(packageCreationVo);
+            logger.LogInformation($"Create new package {newPackage}");
             return CreatedAtRoute("GetPackageById", new { id = newPackage.Id }, newPackage);
         }
     }

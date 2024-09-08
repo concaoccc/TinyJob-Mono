@@ -1,4 +1,4 @@
-using System;
+using TinyJobApi.Database.Entity;
 
 namespace TinyJobApi.Models.Vo;
 
@@ -7,7 +7,6 @@ public class JobVo
     public long Id { get; set; }
     public required string Name { get; set; }
     public long SchedulerId { get; set; }
-    public required string SchedulerName { get; set; }
     public required string Status { get; set; }
     public DateTime? ScheduledExecutionTime { get; set; }
     public DateTime? ActualExecutionTime { get; set; }

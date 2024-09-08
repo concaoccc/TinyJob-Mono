@@ -1,13 +1,15 @@
 using System;
+using TinyJobApi.Database.Entity;
 using TinyJobApi.Models;
+using TinyJobApi.Models.Vo;
 
 namespace TinyJobApi.Services;
 
 public interface ISchedulerService
 {
-    public Task<IEnumerable<Scheduler>> GetAllSchedulersAsync();
-    public Task<Scheduler?> GetSchedulerByIdAsync(int id);
-    public Task<Scheduler?> UpdateSchedulerByIdAsync(int id, Scheduler scheduler);
-    public Task<Scheduler> CreateSchedulerAsync(Scheduler scheduler);
-    public Task DeleteSchedulerByIdAsync(int id);
+    public List<SchedulerVo> GetAllSchedulers();
+    public SchedulerVo? GetSchedulerById(int id);
+    public SchedulerVo? UpdateSchedulerById(int id, SchedulerUpdateVo schedulerUpdateVo);
+    public SchedulerVo CreateScheduler(SchedulerCreationVo schedulerCreationVo);
+    public void DeleteSchedulerById(int id);
 }

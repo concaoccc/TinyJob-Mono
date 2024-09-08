@@ -1,43 +1,41 @@
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TinyJobApi.Models;
+using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
-using TinyJobApi.Services.Mock;
 
 namespace TinyJobApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SchedulerController : ControllerBase
+    public class SchedulerController(ISchedulerService schedulerService, ILogger<SchedulerController> logger) : ControllerBase
     {
-        private readonly ISchedulerService _schedulerService;
-
-        public SchedulerController(ISchedulerService schedulerService)
-        {
-            _schedulerService = schedulerService;
-        }
-
         // Get all schedulers, return List<Scheduler>
         [HttpGet(Name = "GetAllSchedulers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<Scheduler>>> GetAllSchedulers()
+        public ActionResult<IEnumerable<SchedulerVo>> GetAllSchedulers()
         {
-            // Your code to get all schedulers with pagination logic goes here
-            return Ok(await _schedulerService.GetAllSchedulersAsync());
+            var schedulers = schedulerService.GetAllSchedulers();
+            logger.LogInformation($"Get {schedulers.Count()} schedulers.");
+            logger.LogDebug($"Get all schedulers: {schedulers}");
+            return Ok(schedulers);
         }
 
         // Get scheduler by id, return Scheduler
         [HttpGet("{id}", Name = "GetSchedulerById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Scheduler>> GetSchedulerById(int id)
+        public ActionResult<SchedulerVo> GetSchedulerById(int id)
         {
-            var scheduler = await _schedulerService.GetSchedulerByIdAsync(id);
+            logger.LogInformation($"Get scheduler by id: {id}");
+            var scheduler = schedulerService.GetSchedulerById(id);
             if (scheduler == null)
             {
+                logger.LogWarning($"Get scheduler {id} not found.");;
                 return NotFound();
             }
-
+            
+            logger.LogInformation($"Get scheduler {scheduler}");
             return Ok(scheduler);
         }
 
@@ -46,19 +44,17 @@ namespace TinyJobApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Scheduler>> UpdateSchedulerById(int id, Scheduler scheduler)
+        public ActionResult<SchedulerVo> UpdateSchedulerById(int id, SchedulerUpdateVo schedulerUpdateVo)
         {
-            if (scheduler == null || scheduler.Id != id)
-            {
-                return BadRequest();
-            }
-
-            var updatedScheduler = await _schedulerService.UpdateSchedulerByIdAsync(id, scheduler);
+            logger.LogInformation($"Update scheduler {id} to {schedulerUpdateVo}");
+            var updatedScheduler = schedulerService.UpdateSchedulerById(id, schedulerUpdateVo);
             if (updatedScheduler == null)
             {
+                logger.LogWarning($"can't update scheduler {id} not found.");
                 return NotFound();
             }
-
+            
+            logger.LogInformation($"Updated scheduler {updatedScheduler}");
             return Ok(updatedScheduler);
         }
 
@@ -66,14 +62,11 @@ namespace TinyJobApi.Controllers
         [HttpPost(Name = "CreateScheduler")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult<Scheduler>> CreateScheduler([FromBody] Scheduler scheduler)
+        public ActionResult<SchedulerVo> CreateScheduler(SchedulerCreationVo schedulerCreationVo)
         {
-            if (scheduler == null)
-            {
-                return BadRequest();
-            }
-            
-            var newScheduler = await _schedulerService.CreateSchedulerAsync(scheduler);
+            logger.LogInformation($"Create new scheduler {schedulerCreationVo}");
+            var newScheduler = schedulerService.CreateScheduler(schedulerCreationVo);
+            logger.LogInformation($"Created new scheduler {newScheduler}");
             return CreatedAtRoute("GetSchedulerById", new { id = newScheduler.Id }, newScheduler);
         }
     }

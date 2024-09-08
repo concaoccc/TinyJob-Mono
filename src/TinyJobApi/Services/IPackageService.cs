@@ -1,14 +1,15 @@
 using System;
+using TinyJobApi.Database.Entity;
 using TinyJobApi.Models;
+using TinyJobApi.Models.Vo;
 
 namespace TinyJobApi.Services;
 
 public interface IPackageService
 {
-    public Task<Package> CreatePackageAsync(Package package);
-    public Task<Package?> GetPackageByIdAsync(int id);
-    public Task<IEnumerable<Package>> GetAllPackagesAsync();
-    public Task<Package?> UpdatePackageByIdAsync(int id, Package package);
-    public Task DeletePackageByIdAsync(int id);
-
+    public PackageVo CreatePackage(PackageCreationVo packageCreationVo);
+    public PackageVo? GetPackageById(int id);
+    public List<PackageVo> GetAllPackages();
+    public PackageVo? UpdatePackageById(int id, PackageUpdateVo packageUpdateVo);
+    public void DeletePackageById(int id);
 }
