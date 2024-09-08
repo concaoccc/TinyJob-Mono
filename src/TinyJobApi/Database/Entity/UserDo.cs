@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TinyJobApi.Database.Entity;
 
 [Index(nameof(Name), IsUnique = true)]
+[Table("User")]
 public class UserDo
 {
     [Key]

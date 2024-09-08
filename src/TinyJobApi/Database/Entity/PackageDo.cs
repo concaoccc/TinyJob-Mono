@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace TinyJobApi.Database.Entity;
 
 [Index(nameof(OwnerId), nameof(Name), nameof(Version), IsUnique = true)]
+[Table("Package")]
 public class PackageDo
 {
     [Key]

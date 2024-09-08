@@ -4,7 +4,7 @@ using TinyJobApi.Database.Entity;
 
 namespace TinyJobApi.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<PackageDo> Packages { get; set; }
     public DbSet<UserDo> Users { get; set; }

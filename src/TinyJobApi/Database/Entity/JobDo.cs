@@ -18,6 +18,7 @@ public enum JobStatus
     ReScheduled = 9
 }
 
+[Table("Job")]
 public class JobDo
 {
     [Key]

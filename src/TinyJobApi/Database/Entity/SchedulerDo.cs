@@ -12,6 +12,7 @@ public enum SchedulerType
 }
 
 [Index(nameof(PackageId), nameof(Name), IsUnique = true)]
+[Table("Scheduler")]
 public class SchedulerDo
 {
     [Key]

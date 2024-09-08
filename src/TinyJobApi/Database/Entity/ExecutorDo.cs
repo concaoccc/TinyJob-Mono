@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TinyJobApi.Database.Entity;
 
@@ -8,6 +9,7 @@ public enum ExecutorStatus
     Offline = 2,
 }
 
+[Table("Executor")]
 public class ExecutorDo
 {
     [Key]
