@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Formatting.Json;
 using TinyJobApi.Data;
+using TinyJobApi.Middleware;
 using TinyJobApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,7 @@ builder.Services.AddScoped<ISchedulerService, SchedulerServiceImp>();
 builder.Logging.ClearProviders();
 var logger = new LoggerConfiguration()
     .WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/log.txt"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 90)
-    .WriteTo.Console(new JsonFormatter())
+    .WriteTo.Console()
     .CreateLogger();
 builder.Logging.AddSerilog(logger);
 
@@ -43,5 +44,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseCorrelationId();
 
 app.Run();
