@@ -13,7 +13,8 @@ namespace TinyJobApi.Middleware
             }
             
             context.Response.Headers.Append(CorrelationIdHeader, correlationId);
-            logger.LogInformation($"Request path: {context.Request.Path}, CorrelationId: {correlationId}");
+            var path = context.Request.Path.ToString().Replace(Environment.NewLine, "");
+            logger.LogInformation($"Request path: {path}, CorrelationId: {correlationId}");
             await next(context);
         }
     }

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Formatting.Json;
 using TinyJobApi.Data;
 using TinyJobApi.Middleware;
 using TinyJobApi.Services;
