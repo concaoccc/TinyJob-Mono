@@ -34,8 +34,8 @@ public class SchedulerDo
     public required string ExecutionPlan { get; set; }
     [MaxLength(50)]
     public string? ExecutionParams { get; set; }
-    public DateTime? NextExecutionTime { get; init; }
-    public DateTime CreateTime { get; init; }
-    public DateTime UpdateTime { get; set; }
-    public DateTime? EndTime { get; init; }
+    public DateTimeOffset? NextExecutionTime { get; init; }
+    public DateTimeOffset CreateTime { get; init; }
+    public DateTimeOffset UpdateTime { get; set; }
+    public DateTimeOffset? EndTime { get; init; }
 }

@@ -22,6 +22,6 @@ public class PackageDo
     public long OwnerId { get; init; }
     [MaxLength(200)]
     public required string Description { get; set; }
-    public DateTime CreateTime { get; init; }
-    public DateTime UpdateTime { get; set; }
+    public DateTimeOffset CreateTime { get; init; }
+    public DateTimeOffset UpdateTime { get; set; }
 }

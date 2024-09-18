@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using TinyJobApi.Data;
+using TinyJobApi.Database;
 
 #nullable disable
 
@@ -22,6 +22,46 @@ namespace TinyJobApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TinyJobApi.Database.Entity.ExecutorDo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("LastHeartbeat")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Executor");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            LastHeartbeat = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "MockedExecutor",
+                            Status = 1,
+                            UpdateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
+                });
+
             modelBuilder.Entity("TinyJobApi.Database.Entity.JobDo", b =>
                 {
                     b.Property<long>("Id")
@@ -30,16 +70,16 @@ namespace TinyJobApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime?>("ActualExecutionTime")
+                    b.Property<DateTimeOffset?>("ActualExecutionTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("CreateTime")
+                    b.Property<DateTimeOffset>("CreateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<long?>("ExecutorId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTime?>("FinishTime")
+                    b.Property<DateTimeOffset?>("FinishTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -47,7 +87,7 @@ namespace TinyJobApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime?>("ScheduledExecutionTime")
+                    b.Property<DateTimeOffset?>("ScheduledExecutionTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("SchedulerId")
@@ -56,12 +96,24 @@ namespace TinyJobApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdateTime")
+                    b.Property<DateTimeOffset>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("Job");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            CreateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Name = "TestJob",
+                            ScheduledExecutionTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            SchedulerId = 1L,
+                            Status = 3,
+                            UpdateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("TinyJobApi.Database.Entity.PackageDo", b =>
@@ -72,7 +124,7 @@ namespace TinyJobApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreateTime")
+                    b.Property<DateTimeOffset>("CreateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -98,7 +150,7 @@ namespace TinyJobApi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<DateTime>("UpdateTime")
+                    b.Property<DateTimeOffset>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Version")
@@ -112,6 +164,20 @@ namespace TinyJobApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Package");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "Echo helloworld",
+                            Name = "HelloWorld",
+                            OwnerId = 1L,
+                            RelativePath = "MockedRelativePath",
+                            StorageAccount = "MockedStorageAccount",
+                            UpdateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Version = "1.0.0"
+                        });
                 });
 
             modelBuilder.Entity("TinyJobApi.Database.Entity.SchedulerDo", b =>
@@ -132,7 +198,7 @@ namespace TinyJobApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime>("CreateTime")
+                    b.Property<DateTimeOffset>("CreateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -140,7 +206,7 @@ namespace TinyJobApi.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<DateTime?>("EndTime")
+                    b.Property<DateTimeOffset?>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ExecutionParams")
@@ -162,7 +228,7 @@ namespace TinyJobApi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<DateTime?>("NextExecutionTime")
+                    b.Property<DateTimeOffset?>("NextExecutionTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("PackageId")
@@ -171,7 +237,7 @@ namespace TinyJobApi.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("UpdateTime")
+                    b.Property<DateTimeOffset>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -180,6 +246,24 @@ namespace TinyJobApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Scheduler");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AssemblyName = "JobExample",
+                            ClassName = "HelloWorldJob",
+                            CreateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Description = "TestScheduler",
+                            EndTime = new DateTimeOffset(new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999), new TimeSpan(0, 8, 0, 0, 0)),
+                            ExecutionPlan = "0 0 12 0 0",
+                            Name = "TestScheduler",
+                            Namespace = "JobExample",
+                            NextExecutionTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            PackageId = 1L,
+                            Type = 2,
+                            UpdateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 
             modelBuilder.Entity("TinyJobApi.Database.Entity.UserDo", b =>
@@ -190,7 +274,7 @@ namespace TinyJobApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreateTime")
+                    b.Property<DateTimeOffset>("CreateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
@@ -207,7 +291,7 @@ namespace TinyJobApi.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
 
-                    b.Property<DateTime?>("UpdateTime")
+                    b.Property<DateTimeOffset?>("UpdateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -216,6 +300,17 @@ namespace TinyJobApi.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "fake@localhost",
+                            Name = "DefaultAccount",
+                            Pwd = "DefaultPassword",
+                            UpdateTime = new DateTimeOffset(new DateTime(2023, 9, 11, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0))
+                        });
                 });
 #pragma warning restore 612, 618
         }

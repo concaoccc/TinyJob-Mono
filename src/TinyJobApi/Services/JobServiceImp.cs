@@ -1,4 +1,4 @@
-using TinyJobApi.Data;
+using TinyJobApi.Database;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models.Vo;
 

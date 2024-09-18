@@ -15,7 +15,7 @@ public class SchedulerVo
     public required string ClassName { get; set; }
     public required string ExecutionPlan { get; set; }
     public string? ExecutionParams { get; set; }
-    public DateTime? CreateTime { get; set; }
-    public DateTime? UpdateTime { get; set; }
-    public DateTime? NextExecutionTime { get; set; }
+    public DateTimeOffset? CreateTime { get; set; }
+    public DateTimeOffset? UpdateTime { get; set; }
+    public DateTimeOffset? NextExecutionTime { get; set; }
 }

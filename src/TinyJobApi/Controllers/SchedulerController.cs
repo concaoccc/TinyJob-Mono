@@ -69,5 +69,23 @@ namespace TinyJobApi.Controllers
             logger.LogInformation($"Created new scheduler {newScheduler}");
             return CreatedAtRoute("GetSchedulerById", new { id = newScheduler.Id }, newScheduler);
         }
+        
+        // Delete scheduler by id, return NoContent
+        [HttpDelete("{id}", Name = "DeleteSchedulerById")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult DeleteSchedulerById(int id)
+        {
+            logger.LogInformation($"Delete scheduler by id: {id}");
+            var deleted = schedulerService.DeleteSchedulerById(id);
+            if (!deleted)
+            {
+                logger.LogWarning($"Delete scheduler {id} not found.");
+                return NotFound();
+            }
+            
+            logger.LogInformation($"Deleted scheduler {id}");
+            return NoContent();
+        }
     }
 }

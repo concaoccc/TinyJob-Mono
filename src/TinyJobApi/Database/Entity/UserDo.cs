@@ -16,6 +16,6 @@ public class UserDo
     public required string Pwd { get; set; }
     [MaxLength(30)]
     public string? Email { get; set; }
-    public DateTime CreateTime { get; init; }
-    public DateTime? UpdateTime { get; set; }
+    public DateTimeOffset CreateTime { get; init; }
+    public DateTimeOffset? UpdateTime { get; set; }
 }

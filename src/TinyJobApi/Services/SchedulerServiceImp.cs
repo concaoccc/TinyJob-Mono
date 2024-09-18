@@ -1,4 +1,4 @@
-using TinyJobApi.Data;
+using TinyJobApi.Database;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models;
 using TinyJobApi.Models.Vo;
@@ -33,7 +33,7 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
         return ConvertSchedulerDoToVo(schedulerDo);
     }
 
-    public void DeleteSchedulerById(int id)
+    public bool DeleteSchedulerById(int id)
     {
         logger.LogInformation($"Try to delete scheduler {id}");
         var scheduler = dbContext.Schedulers.FirstOrDefault(s => s.Id == id);
@@ -42,7 +42,10 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
             logger.LogInformation($"Delete scheduler {scheduler}");
             dbContext.Schedulers.Remove(scheduler);
             dbContext.SaveChanges();
+            return true;
         }
+
+        return false;
     }
 
     public List<SchedulerVo> GetAllSchedulers()
@@ -142,6 +145,11 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
             dbContext.SaveChanges();
             return ConvertSchedulerDoToVo(existingScheduler);
         }
+    }
+    
+    public List<SchedulerDo> FindByPackageId(long packageId)
+    {
+        return dbContext.Schedulers.Where(s => s.PackageId == packageId).ToList();
     }
     
     // convert SchedulerDo to SchedulerVo

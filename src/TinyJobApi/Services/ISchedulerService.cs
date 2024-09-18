@@ -11,5 +11,6 @@ public interface ISchedulerService
     public SchedulerVo? GetSchedulerById(int id);
     public SchedulerVo? UpdateSchedulerById(int id, SchedulerUpdateVo schedulerUpdateVo);
     public SchedulerVo CreateScheduler(SchedulerCreationVo schedulerCreationVo);
-    public void DeleteSchedulerById(int id);
+    public bool DeleteSchedulerById(int id);
+    public List<SchedulerDo> FindByPackageId(long packageId);
 }

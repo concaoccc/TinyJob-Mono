@@ -6,7 +6,7 @@ namespace TinyJobApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PackageController(IPackageService packageService, ILogger<PackageController> logger) : ControllerBase
+    public class PackageController(IPackageService packageService, ISchedulerService schedulerService, ILogger<PackageController> logger) : ControllerBase
     {
         // Get all packages, return List<Package>
         [HttpGet(Name = "GetAllPackages")]
@@ -64,6 +64,30 @@ namespace TinyJobApi.Controllers
             var newPackage = packageService.CreatePackage(packageCreationVo);
             logger.LogInformation($"Create new package {newPackage}");
             return CreatedAtRoute("GetPackageById", new { id = newPackage.Id }, newPackage);
+        }
+        
+        // Delete package by id
+        [HttpDelete("{id}", Name = "DeletePackageById")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult DeletePackageById(int id)
+        {
+            var package = packageService.GetPackageById(id);
+            if (package == null)
+            {
+                return NotFound();
+            }
+            
+            var relatedSchedulers = schedulerService.FindByPackageId(id);
+            if (relatedSchedulers.Count > 0)
+            {
+                var schedulerNames = relatedSchedulers.Select(s => s.Name).ToList();
+                return BadRequest($"Package {id} is used by schedulers: {string.Join(", ", schedulerNames)}");
+            }
+            
+            packageService.DeletePackageById(id);
+            return NoContent();
         }
     }
 }
