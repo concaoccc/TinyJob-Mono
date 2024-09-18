@@ -22,9 +22,9 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
             ClassName = schedulerCreationVo.ClassName,
             ExecutionPlan = schedulerCreationVo.ExecutionPlan,
             ExecutionParams = schedulerCreationVo.ExecutionParams,
-            CreateTime = DateTime.Now,
-            UpdateTime = DateTime.Now,
-            NextExecutionTime = DateTime.Now
+            CreateTime = DateTime.Now.ToUniversalTime(),
+            UpdateTime = DateTime.Now.ToUniversalTime(),
+            NextExecutionTime = DateTime.Now.ToUniversalTime()
         };
         dbContext.Schedulers.Add(schedulerDo);
         
@@ -134,6 +134,7 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
         if (!needUpdate)
         {
             logger.LogInformation($"No need to update scheduler {existingScheduler} with {schedulerUpdateVo}");
+            existingScheduler.UpdateTime = DateTime.Now.ToUniversalTime();
             return ConvertSchedulerDoToVo(existingScheduler);
         }
         else

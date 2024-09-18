@@ -30,7 +30,7 @@ public class JobServiceImp(AppDbContext dbContext, ILogger<JobServiceImp> logger
         }
 
         job.Status = status;
-        job.UpdateTime = DateTime.Now;
+        job.UpdateTime = DateTime.Now.ToUniversalTime();
         dbContext.SaveChanges();
         logger.LogInformation($"Updated job {id}, current value: {job}");
         return ConvertJobDoToVo(job);

@@ -16,8 +16,8 @@ public class PackageServiceImp(AppDbContext appDbContext) : IPackageService
             RelativePath = packageCreationVo.RelativePath,
             StorageAccount = packageCreationVo.StorageAccount,
             Version = packageCreationVo.Version,
-            CreateTime = DateTime.Now,
-            UpdateTime = DateTime.Now,
+            CreateTime = DateTime.Now.ToUniversalTime(),
+            UpdateTime = DateTime.Now.ToUniversalTime(),
         };
         appDbContext.Packages.Add(packageDo);
         appDbContext.SaveChanges();
@@ -89,7 +89,7 @@ public class PackageServiceImp(AppDbContext appDbContext) : IPackageService
             return ConvertPackageDoToVo(existingPackage);
         }
 
-        existingPackage.UpdateTime = DateTime.Now;
+        existingPackage.UpdateTime = DateTime.Now.ToUniversalTime();
         appDbContext.SaveChanges();
 
         return ConvertPackageDoToVo(existingPackage);
