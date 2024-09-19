@@ -1,21 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TinyJobApi.Models.Vo;
 
 namespace TinyJobApi.Database.Entity;
 
-[Index(nameof(Name), IsUnique = true)]
-[Table("User")]
 public class UserDo
 {
-    [Key]
     public int Id { get; init; }
-    [MaxLength(30)]
-    public required string Name { get; set; }
-    [MaxLength(30)]
-    public required string Pwd { get; set; }
-    [MaxLength(30)]
+    public required string UserName { get; set; }
+    public required string Password { get; set; }
     public string? Email { get; set; }
-    public DateTime CreateTime { get; init; }
-    public DateTime? UpdateTime { get; set; }
+    public DateTimeOffset CreateTime { get; init; }
+    public DateTimeOffset? UpdateTime { get; set; }
+    public ICollection<PackageDo> Packages { get; } = new List<PackageDo>();
 }

@@ -7,6 +7,6 @@ namespace TinyJobApi.Services;
 public interface IJobService
 {
     public JobVo? GetJobById(int id);
-    public List<JobVo> GetAllJobs();
+    public PageVo<JobVo> GetAllJobs(int page = 1, int size = 10);
     public JobVo? UpdateJobStatusById(int id, JobStatus status);
 }

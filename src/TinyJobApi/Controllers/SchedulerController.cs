@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TinyJobApi.Models;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
@@ -13,11 +13,12 @@ namespace TinyJobApi.Controllers
         // Get all schedulers, return List<Scheduler>
         [HttpGet(Name = "GetAllSchedulers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<SchedulerVo>> GetAllSchedulers()
+        public ActionResult<IEnumerable<SchedulerVo>> GetAllSchedulers(int page = 1, int pageSize = 10)
         {
-            var schedulers = schedulerService.GetAllSchedulers();
-            logger.LogInformation($"Get {schedulers.Count()} schedulers.");
-            logger.LogDebug($"Get all schedulers: {schedulers}");
+            logger.LogInformation($"Query all schedulers with page {page}, pagesize {pageSize}.");
+            PageVo<SchedulerVo> schedulers = schedulerService.GetAllSchedulers(page, pageSize);
+            logger.LogInformation($"Get {schedulers.TotalCount} schedulers.");
+            logger.LogDebug($"Get all schedulers: {JsonConvert.SerializeObject(schedulers)}");
             return Ok(schedulers);
         }
 
@@ -31,7 +32,7 @@ namespace TinyJobApi.Controllers
             var scheduler = schedulerService.GetSchedulerById(id);
             if (scheduler == null)
             {
-                logger.LogWarning($"Get scheduler {id} not found.");;
+                logger.LogWarning($"Get scheduler {id} not found.");
                 return NotFound();
             }
             
@@ -68,6 +69,24 @@ namespace TinyJobApi.Controllers
             var newScheduler = schedulerService.CreateScheduler(schedulerCreationVo);
             logger.LogInformation($"Created new scheduler {newScheduler}");
             return CreatedAtRoute("GetSchedulerById", new { id = newScheduler.Id }, newScheduler);
+        }
+        
+        // Delete scheduler by id, return NoContent
+        [HttpDelete("{id}", Name = "DeleteSchedulerById")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult DeleteSchedulerById(int id)
+        {
+            logger.LogInformation($"Delete scheduler by id: {id}");
+            var deleted = schedulerService.DeleteSchedulerById(id);
+            if (!deleted)
+            {
+                logger.LogWarning($"Delete scheduler {id} not found.");
+                return NotFound();
+            }
+            
+            logger.LogInformation($"Deleted scheduler {id}");
+            return NoContent();
         }
     }
 }

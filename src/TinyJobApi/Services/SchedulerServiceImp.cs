@@ -1,4 +1,4 @@
-using TinyJobApi.Data;
+using TinyJobApi.Database;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models;
 using TinyJobApi.Models.Vo;
@@ -33,7 +33,7 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
         return ConvertSchedulerDoToVo(schedulerDo);
     }
 
-    public void DeleteSchedulerById(int id)
+    public bool DeleteSchedulerById(int id)
     {
         logger.LogInformation($"Try to delete scheduler {id}");
         var scheduler = dbContext.Schedulers.FirstOrDefault(s => s.Id == id);
@@ -42,15 +42,29 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
             logger.LogInformation($"Delete scheduler {scheduler}");
             dbContext.Schedulers.Remove(scheduler);
             dbContext.SaveChanges();
+            return true;
         }
+
+        return false;
     }
 
-    public List<SchedulerVo> GetAllSchedulers()
+    public PageVo<SchedulerVo> GetAllSchedulers(int page = 1, int size = 10)
     {
-        logger.LogInformation($"Get all schedules");
-        var schedulerVos = dbContext.Schedulers.Select(ConvertSchedulerDoToVo).ToList();
-        logger.LogInformation($"Get {schedulerVos.Count} schedules.");
-        return schedulerVos;
+        logger.LogDebug($"Get all schedulers");
+        var schedulerCount = dbContext.Schedulers.Count();
+        var schedulerVos = dbContext.Schedulers
+            .OrderByDescending(scheduler => scheduler.CreateTime )
+            .Skip((page - 1) * size)
+            .Take(size).AsEnumerable()
+            .Select(ConvertSchedulerDoToVo).ToList();
+        logger.LogInformation($"Total scheduler count {schedulerCount}, get {schedulerVos.Count} schedulers with page {page}, pagesize {size}.");
+        return new PageVo<SchedulerVo>
+        {
+            TotalCount = schedulerCount,
+            Page = page,
+            PageSize = size,
+            Data = schedulerVos
+        };
     }
 
     public SchedulerVo? GetSchedulerById(int id)
@@ -142,6 +156,11 @@ public class SchedulerServiceImp(AppDbContext dbContext, ILogger<SchedulerServic
             dbContext.SaveChanges();
             return ConvertSchedulerDoToVo(existingScheduler);
         }
+    }
+    
+    public List<SchedulerDo> FindByPackageId(long packageId)
+    {
+        return dbContext.Schedulers.Where(s => s.PackageId == packageId).ToList();
     }
     
     // convert SchedulerDo to SchedulerVo

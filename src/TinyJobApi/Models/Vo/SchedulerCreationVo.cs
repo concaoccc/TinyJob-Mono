@@ -8,7 +8,7 @@ public class SchedulerCreationVo
     public required string Name { get; set; }
     public required string Description { get; set; }
     public required SchedulerType Type { get; set; }
-    public required long PackageId { get; set; }
+    public required int PackageId { get; set; }
     public required string AssemblyName { get; set; }
     public required string Namespace { get; set; }
     public required string ClassName { get; set; }

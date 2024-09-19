@@ -1,4 +1,5 @@
-using TinyJobApi.Data;
+using Microsoft.EntityFrameworkCore;
+using TinyJobApi.Database;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models.Vo;
 
@@ -6,11 +7,23 @@ namespace TinyJobApi.Services;
 
 public class JobServiceImp(AppDbContext dbContext, ILogger<JobServiceImp> logger) : IJobService
 {
-    public List<JobVo> GetAllJobs()
+    public PageVo<JobVo> GetAllJobs(int page, int size)
     {
-        var jobs = dbContext.Jobs.Select(ConvertJobDoToVo).ToList();
-        logger.LogInformation($"Get {jobs.Count} jobs.");
-        return jobs;
+        var jobCount = dbContext.Jobs.Count();
+        var jobs = dbContext.Jobs
+            .Include(e => e.Scheduler)
+            .OrderByDescending(j => j.CreateTime)
+            .Skip((page -1) * size)
+            .Take(size).AsEnumerable()
+            .ToList();
+        logger.LogInformation($"Total job count {jobCount}, get {jobs.Count} schedulers with page {page}, pagesize {size}.");
+        return new PageVo<JobVo>()
+        {
+            TotalCount = jobCount,
+            Page = page,
+            PageSize = size,
+            Data = jobs.Select(ConvertJobDoToVo).ToList(),
+        };
     }
 
     public JobVo? GetJobById(int id)

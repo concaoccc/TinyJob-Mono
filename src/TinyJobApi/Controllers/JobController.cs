@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
@@ -12,11 +13,11 @@ namespace TinyJobApi.Controllers
         // Get all jobs, return List<Job>
         [HttpGet(Name = "GetAllJobs")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<List<JobVo>> GetAllJobs()
+        public ActionResult<List<JobVo>> GetAllJobs(int page = 1, int pageSize = 10)
         {
-            var jobs = jobService.GetAllJobs();
-            logger.LogInformation($"Get {jobs.Count()} jobs.");
-            logger.LogDebug($"Get all jobs: {jobs}");
+            logger.LogInformation($"Query all jobs with page {page}, pagesize {pageSize}.");
+            var jobs = jobService.GetAllJobs(page, pageSize);
+            logger.LogDebug($"Get all jobs: {JsonConvert.SerializeObject(jobs)}");
             return Ok(jobs);
         }
 

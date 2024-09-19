@@ -1,11 +1,11 @@
 using System;
-using TinyJobApi.Data;
+using TinyJobApi.Database;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models.Vo;
 
 namespace TinyJobApi.Services;
 
-public class PackageServiceImp(AppDbContext appDbContext) : IPackageService
+public class PackageServiceImp(AppDbContext appDbContext, ILogger<PackageServiceImp> logger) : IPackageService
 {
     public PackageVo CreatePackage(PackageCreationVo packageCreationVo)
     {
@@ -34,10 +34,25 @@ public class PackageServiceImp(AppDbContext appDbContext) : IPackageService
         }
     }
 
-    public List<PackageVo> GetAllPackages()
+    public PageVo<PackageVo> GetAllPackages(int page, int size)
     {
-        var jobDos = appDbContext.Packages.ToList();
-        return jobDos.Select(ConvertPackageDoToVo).ToList();
+        var packageCount = appDbContext.Packages.Count();
+        var packageVos = appDbContext.Packages
+            .OrderByDescending(package => package.CreateTime)
+            .Skip((page - 1) * size)
+            .Take(size).AsEnumerable()
+            .Select(ConvertPackageDoToVo)
+            .ToList();
+        
+        logger.LogInformation($"Total package count {packageCount}, get {packageVos.Count} schedulers with page {page}, pagesize {size}.");
+        return new PageVo<PackageVo>
+        {
+            TotalCount = packageCount,
+            Page = page,
+            PageSize = size,
+            Data = packageVos
+        };
+
     }
 
     public PackageVo? GetPackageById(int id)

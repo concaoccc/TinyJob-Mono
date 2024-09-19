@@ -18,21 +18,18 @@ public enum JobStatus
     ReScheduled = 9
 }
 
-[Table("Job")]
 public class JobDo
 {
-    [Key]
     public long Id { get; init; }
-    [MaxLength(50)]
-    [Required]
     public required string Name { get; init; }
-    [ForeignKey("Scheduler")]
-    public long SchedulerId { get; init; }
-    public long? ExecutorId { get; set; }
+    public int SchedulerId { get; init; }
+    public SchedulerDo? Scheduler { get; set; }
+    public int? ExecutorId { get; set; }
+    public ExecutorDo? Executor { get; set; }
     public required JobStatus Status { get; set; }
-    public DateTime? ScheduledExecutionTime { get; set; }
-    public DateTime? ActualExecutionTime { get; set; }
-    public DateTime? FinishTime { get; set; }
-    public DateTime CreateTime { get; set; }
-    public DateTime UpdateTime { get; set; }
+    public DateTimeOffset? ScheduledExecutionTime { get; set; }
+    public DateTimeOffset? ActualExecutionTime { get; set; }
+    public DateTimeOffset? FinishTime { get; set; }
+    public DateTimeOffset CreateTime { get; set; }
+    public DateTimeOffset UpdateTime { get; set; }
 }

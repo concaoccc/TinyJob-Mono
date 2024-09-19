@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
 
@@ -6,17 +7,17 @@ namespace TinyJobApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PackageController(IPackageService packageService, ILogger<PackageController> logger) : ControllerBase
+    public class PackageController(IPackageService packageService, ISchedulerService schedulerService, ILogger<PackageController> logger) : ControllerBase
     {
         // Get all packages, return List<Package>
         [HttpGet(Name = "GetAllPackages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<PackageVo>> GetAllPackages()
+        public ActionResult<IEnumerable<PackageVo>> GetAllPackages(int page = 1, int pageSize = 10)
         {
-            var packages = packageService.GetAllPackages();
-            logger.LogInformation($"Get {packages.Count()} packages.");
-            logger.LogDebug($"Get all packages: {packages}");
-            return Ok(packageService.GetAllPackages());
+            logger.LogInformation($"Query all packages with page {page}, pagesize {pageSize}.");
+            var packages = packageService.GetAllPackages(page, pageSize);
+            logger.LogDebug($"Get all packages: {JsonConvert.SerializeObject(packages)}");
+            return Ok(packages);
         }
 
         // Get package by id, return Package
@@ -64,6 +65,30 @@ namespace TinyJobApi.Controllers
             var newPackage = packageService.CreatePackage(packageCreationVo);
             logger.LogInformation($"Create new package {newPackage}");
             return CreatedAtRoute("GetPackageById", new { id = newPackage.Id }, newPackage);
+        }
+        
+        // Delete package by id
+        [HttpDelete("{id}", Name = "DeletePackageById")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult DeletePackageById(int id)
+        {
+            var package = packageService.GetPackageById(id);
+            if (package == null)
+            {
+                return NotFound();
+            }
+            
+            var relatedSchedulers = schedulerService.FindByPackageId(id);
+            if (relatedSchedulers.Count > 0)
+            {
+                var schedulerNames = relatedSchedulers.Select(s => s.Name).ToList();
+                return BadRequest($"Package {id} is used by schedulers: {string.Join(", ", schedulerNames)}");
+            }
+            
+            packageService.DeletePackageById(id);
+            return NoContent();
         }
     }
 }

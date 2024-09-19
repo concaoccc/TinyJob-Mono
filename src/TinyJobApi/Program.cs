@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using TinyJobApi.Data;
+using TinyJobApi.Database;
 using TinyJobApi.Middleware;
 using TinyJobApi.Services;
 
@@ -16,12 +16,14 @@ builder.Services.AddScoped<IPackageService, PackageServiceImp>();
 builder.Services.AddScoped<ISchedulerService, SchedulerServiceImp>();
 
 // Add logger
-builder.Logging.ClearProviders();
-var logger = new LoggerConfiguration()
-    .WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/log.txt"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 90)
-    .WriteTo.Console()
-    .CreateLogger();
-builder.Logging.AddSerilog(logger);
+// log trace in console
+// builder.Logging.ClearProviders();
+// var logger = new LoggerConfiguration()
+//     .MinimumLevel.Debug()
+//     .WriteTo.File(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs/log.txt"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 90)
+//     .WriteTo.Console()
+//     .CreateLogger();
+// builder.Logging.AddSerilog(logger);
 
 // Add database
 var pgsqlConnectionString = builder.Configuration.GetConnectionString("PostgreSQL");
