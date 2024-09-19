@@ -13,9 +13,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         SeedData(modelBuilder);
     }
-
+    
     private void SeedData(ModelBuilder modelBuilder)
     {
         // new DateTimeOffset(2023,9,11) is a fake time
@@ -24,8 +25,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         var defaultUser = new UserDo
         {
             Id = 1,
-            Name = "DefaultAccount",
-            Pwd = "DefaultPassword",
+            UserName = "DefaultAccount",
+            Password = "DefaultPassword",
             Email = "fake@localhost",
             CreateTime = time,
             UpdateTime = time
