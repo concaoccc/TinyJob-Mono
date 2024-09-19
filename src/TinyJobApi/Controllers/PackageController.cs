@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
 
@@ -11,12 +12,12 @@ namespace TinyJobApi.Controllers
         // Get all packages, return List<Package>
         [HttpGet(Name = "GetAllPackages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<PackageVo>> GetAllPackages()
+        public ActionResult<IEnumerable<PackageVo>> GetAllPackages(int page = 1, int pageSize = 10)
         {
-            var packages = packageService.GetAllPackages();
-            logger.LogInformation($"Get {packages.Count()} packages.");
-            logger.LogDebug($"Get all packages: {packages}");
-            return Ok(packageService.GetAllPackages());
+            logger.LogInformation($"Query all packages with page {page}, pagesize {pageSize}.");
+            var packages = packageService.GetAllPackages(page, pageSize);
+            logger.LogDebug($"Get all packages: {JsonConvert.SerializeObject(packages)}");
+            return Ok(packages);
         }
 
         // Get package by id, return Package

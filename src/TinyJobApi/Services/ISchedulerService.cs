@@ -7,7 +7,7 @@ namespace TinyJobApi.Services;
 
 public interface ISchedulerService
 {
-    public List<SchedulerVo> GetAllSchedulers();
+    public PageVo<SchedulerVo> GetAllSchedulers(int page = 1, int size = 10);
     public SchedulerVo? GetSchedulerById(int id);
     public SchedulerVo? UpdateSchedulerById(int id, SchedulerUpdateVo schedulerUpdateVo);
     public SchedulerVo CreateScheduler(SchedulerCreationVo schedulerCreationVo);

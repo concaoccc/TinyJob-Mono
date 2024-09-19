@@ -6,11 +6,23 @@ namespace TinyJobApi.Services;
 
 public class JobServiceImp(AppDbContext dbContext, ILogger<JobServiceImp> logger) : IJobService
 {
-    public List<JobVo> GetAllJobs()
+    public PageVo<JobVo> GetAllJobs(int page, int size)
     {
-        var jobs = dbContext.Jobs.Select(ConvertJobDoToVo).ToList();
-        logger.LogInformation($"Get {jobs.Count} jobs.");
-        return jobs;
+        var jobCount = dbContext.Jobs.Count();
+        var jobs = dbContext.Jobs
+            .OrderByDescending(j => j.CreateTime)
+            .Skip((page -1) * size)
+            .Take(size).AsEnumerable()
+            .Select(ConvertJobDoToVo)
+            .ToList();
+        logger.LogInformation($"Total job count {jobCount}, get {jobs.Count} schedulers with page {page}, pagesize {size}.");
+        return new PageVo<JobVo>()
+        {
+            TotalCount = jobCount,
+            Page = page,
+            PageSize = size,
+            Data = jobs
+        };
     }
 
     public JobVo? GetJobById(int id)
