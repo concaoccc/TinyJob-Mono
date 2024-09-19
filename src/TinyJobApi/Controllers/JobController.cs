@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using TinyJobApi.Database.Entity;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
@@ -17,7 +17,7 @@ namespace TinyJobApi.Controllers
         {
             logger.LogInformation($"Query all jobs with page {page}, pagesize {pageSize}.");
             var jobs = jobService.GetAllJobs(page, pageSize);
-            logger.LogDebug($"Get all jobs: {JsonConvert.SerializeObject(jobs)}");
+            logger.LogDebug($"Get all jobs: {JsonSerializer.Serialize(jobs)}");
             return Ok(jobs);
         }
 

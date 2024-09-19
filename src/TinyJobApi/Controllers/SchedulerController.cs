@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using TinyJobApi.Models;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
@@ -18,7 +18,7 @@ namespace TinyJobApi.Controllers
             logger.LogInformation($"Query all schedulers with page {page}, pagesize {pageSize}.");
             PageVo<SchedulerVo> schedulers = schedulerService.GetAllSchedulers(page, pageSize);
             logger.LogInformation($"Get {schedulers.TotalCount} schedulers.");
-            logger.LogDebug($"Get all schedulers: {JsonConvert.SerializeObject(schedulers)}");
+            logger.LogDebug($"Get all schedulers: {JsonSerializer.Serialize(schedulers)}");
             return Ok(schedulers);
         }
 
