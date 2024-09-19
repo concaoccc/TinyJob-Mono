@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using TinyJobApi.Models.Vo;
 using TinyJobApi.Services;
 
@@ -16,7 +16,7 @@ namespace TinyJobApi.Controllers
         {
             logger.LogInformation($"Query all packages with page {page}, pagesize {pageSize}.");
             var packages = packageService.GetAllPackages(page, pageSize);
-            logger.LogDebug($"Get all packages: {JsonConvert.SerializeObject(packages)}");
+            logger.LogDebug($"Get all packages: {JsonSerializer.Serialize(packages)}");
             return Ok(packages);
         }
 
